@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>document</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-repeat: no-repeat;
+            background-size: cover;
+        }
+
+        .quiz-container {
+            padding: 25px;
+            width: 350px;
+            border-radius: 20px;
+            background-color: rgb(182, 223, 101);
+            box-shadow: 2px 2px 2px gray;
+            border: 2px 2px black solid;
+        }
+
+        .option {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border: 2px solid;
+            cursor: pointer;
+            border-radius: 20px;
+
+        }
+
+        .correct {
+            background: lightgreen;
+            color: black;
+        }
+
+        .wrong {
+            background: lightcoral;
+            color: black;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            background-color: rgb(182, 223, 101);
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="quiz-container">
+        <h2 id="question"></h2>
+
+        <button class="option"></button>
+        <button class="option"></button>
+        <button class="option"></button>
+        <button class="option"></button>
+
+        <div class="footer">
+            <span id="timer">Time:60</span>
+            <button id="nextbtn" style="border-radius: 10px; padding: 10px;">Next</button>
+        </div>
+    </div>
+
+    <script>
+        const quiz = [
+            {
+                q: "What is JavaScript?",
+                options: ["Language", "Framework", "Library", "Database"],
+                answer: "Language"
+            },
+            {
+                q: "What is React?",
+                options: ["Language", "Framework", "Library", "Database"],
+                answer: "Library"
+            },
+            {
+            q: "What does HTML stand for? ",
+                options: ["Language", "Web page stu", "Library", "Hyper Text Markup Language"],
+                answer: "Hyper Text Markup Language"
+            }
+        ];
+
+        let index = 0;
+        let score = 0;
+        let time = 30;
+        let timer;
+
+        const questionEl = document.getElementById("question");
+        const optionBtns = document.querySelectorAll(".option");
+        const timerEl = document.getElementById("timer");
+        const nextBtn = document.getElementById("nextbtn");
+
+        loadQuestion();
+
+        function loadQuestion() {
+            questionEl.innerText = quiz[index].q;
+            optionBtns.forEach((btn, i) => {
+                btn.innerText = quiz[index].options[i];
+                btn.className = "option";
+                btn.disabled = false;
+            });
+        }
+        startTimer();
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timerEl.innerText = `time:${time}`;
+                time--;
+                if (time < 0) nextQuestion();
+            }, 1000);
+        }
+
+        optionBtns.forEach(btn => {
+            btn.addEventListener("click", () => checkAnswer(btn));
+        });
+
+        function checkAnswer(btn) {
+            if (btn.innerText === quiz[index].answer) {
+                btn.classList.add("correct");
+                score++;
+            } else {
+                btn.classList.add("wrong");
+            }
+            optionBtns.forEach(b => b.disabled = true);
+        }
+
+        nextBtn.addEventListener("click", nextQuestion);
+
+        function nextQuestion() {
+            index++;
+            time = 60;
+            if (index < quiz.length) {
+                loadQuestion();
+            } else {
+                clearInterval(timer);
+                document.body.innerHTML = `<h2>Score: ${score}/${quiz.length}</h2>`;
+            }
+        }
+    </script>
+</body>
+</html>
